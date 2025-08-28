@@ -1,35 +1,49 @@
-# Angular / Node.js
-
-# Node modules
+# Angular / Node.js / TypeScript
 node_modules/
-
-# Compiled output
 dist/
 out-tsc/
-
-# TypeScript
+tmp/
+bazel-out/
 *.tsbuildinfo
-
-# Environment files
 /src/environments/environment*.ts
-/.env
+.env
 
 # IDEs and editors
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
+.history/
 
-# Logs
+# Logs and debugging
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+libpeerconnection.log
+testem.log
+speed-measure-plugin.json
+chrome-profiler-events.json
+connect.lock
+
+# Testing and coverage
+coverage/
+
+# Cache and dependencies
+.sass-cache/
+typings/
 
 # OS generated
 .DS_Store
 Thumbs.db
-
-# Coverage reports
-coverage/

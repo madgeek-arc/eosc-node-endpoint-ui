@@ -1,0 +1,49 @@
+/* You can add global styles to this file, and also import other style files */
+.delete-icon {
+  float: right;
+  cursor: pointer;
+  background: #f0f0f0;
+  transition: background 0.2s, color 0.2s;
+  margin-left: 0.3rem; /* small space from edit icon */
+}
+
+.delete-icon:hover {
+  background: #ff4d4d; /* red */
+  color: white;
+}
+
+.edit-icon {
+  float: right;
+  cursor: pointer;
+  background: #f0f0f0; /* default light grey */
+  transition: background 0.2s, color 0.2s;
+}
+
+.edit-icon:hover {
+  background: #1e87f0; /* UIKit primary button blue */
+  color: white;         /* icon color on hover */
+}
+
+.capabilities-title {
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+
+.messages-container {
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.app-footer {
+  margin: 0;
+  width: 100%;
+}
+
+.footer-logo img {
+  width: 90px;
+  height: auto;
+  object-fit: contain;
+}

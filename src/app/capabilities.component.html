@@ -1,0 +1,121 @@
+<h2 class="uk-heading-line uk-text-center capabilities-title" style=""><span>Capabilities</span></h2>
+
+<!-- Message area: fixed height to prevent layout shifts -->
+<div class="messages-container">
+  <div *ngIf="loading" class="uk-alert-primary uk-margin-remove" uk-alert>
+    Loading capabilities...
+  </div>
+
+  <div *ngIf="error" class="uk-alert-danger uk-margin-remove uk-border-rounded" uk-alert>
+    {{ error }}
+  </div>
+
+  <div *ngIf="success" class="uk-alert-success uk-margin-remove uk-border-rounded" uk-alert>
+    {{ success }}
+  </div>
+</div>
+
+<div class="uk-grid-small uk-child-width-1-2@s uk-grid-match" uk-grid *ngIf="data && !loading">
+  <div *ngFor="let c of data.capabilities">
+    <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
+      <h3 class="uk-card-title">
+        {{ c.capability_type }}
+        <span class="uk-icon-link uk-border-rounded uk-padding-small edit-icon" uk-icon="icon: pencil; ratio: 1"
+              (click)="editCap(c)"></span>
+      </h3>
+      <p><strong>Endpoint:</strong>
+        <ng-container *ngIf="isUrl(c.endpoint); else plainText">
+          <a [href]="c.endpoint"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="uk-text-primary">
+            {{ c.endpoint }}
+          </a>
+        </ng-container>
+        <ng-template #plainText>
+          {{ c.endpoint }}
+        </ng-template>
+      </p>
+      <p><strong>Version:</strong> {{ c.version }}
+        <span class="uk-icon-link uk-border-rounded uk-padding-small delete-icon" uk-icon="icon: trash; ratio: 1"
+              (click)="confirmDelete(c)"></span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<hr class="uk-margin">
+
+<h3>Add Capability</h3>
+<form class="uk-form-stacked" (ngSubmit)="addCap()">
+  <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" placeholder="Capability Type" [(ngModel)]="newCap.capability_type" name="type" required>
+  </div>
+  <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" placeholder="Endpoint" [(ngModel)]="newCap.endpoint" name="endpoint">
+  </div>
+  <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" placeholder="Version" [(ngModel)]="newCap.version" name="version">
+  </div>
+  <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
+</form>
+
+<!-- Delete Modal -->
+<div id="delete-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
+    <h2 class="uk-modal-title">Delete Capability</h2>
+    <p>Are you sure you want to delete this Capability?</p>
+    <form (ngSubmit)="deleteCap()">
+      <ng-container *ngIf="selectedCap">
+        <p class="uk-card-title">
+          {{ selectedCap.capability_type }}
+        </p>
+        <p><strong>Endpoint:</strong>
+          <ng-container *ngIf="isUrl(selectedCap.endpoint); else plainText">
+            <a [href]="selectedCap.endpoint"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="uk-text-primary">
+              {{ selectedCap.endpoint }}
+            </a>
+          </ng-container>
+          <ng-template #plainText>
+            {{ selectedCap.endpoint }}
+          </ng-template>
+        </p>
+        <p><strong>Version:</strong> {{ selectedCap.version }}</p>
+      </ng-container>
+      <div class="uk-flex uk-flex-right uk-margin">
+        <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeDeleteModal()">Cancel</button>
+        <button type="submit" class="uk-button uk-button-danger uk-border-rounded">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
+    <h2 class="uk-modal-title">Edit Capability</h2>
+    <form (ngSubmit)="saveEdit()">
+      <ng-container *ngIf="selectedCap">
+        <div class="uk-margin">
+          <label class="uk-form-label" for="editType">Capability Type</label>
+          <input class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.capability_type" name="editType" required>
+        </div>
+        <div class="uk-margin">
+          <label class="uk-form-label" for="editType">Endpoint</label>
+          <input class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.endpoint" name="editEndpoint">
+        </div>
+        <div class="uk-margin">
+          <label class="uk-form-label" for="editType">Version</label>
+          <input class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.version" name="editVersion">
+        </div>
+      </ng-container>
+      <div class="uk-flex uk-flex-right uk-margin">
+        <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeEditModal()">Cancel</button>
+        <button type="submit" class="uk-button uk-button-primary uk-border-rounded">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
