@@ -3,6 +3,7 @@ import { CapabilitiesService, Capability, CapabilitiesObject } from './capabilit
 
 @Component({
   selector: 'app-capabilities',
+  standalone: false,
   templateUrl: './capabilities.component.html'
 })
 export class CapabilitiesComponent implements OnInit {
