@@ -8,6 +8,7 @@ import { CapabilitiesService, Capability, CapabilitiesObject } from './capabilit
 })
 export class CapabilitiesComponent implements OnInit {
   data: CapabilitiesObject | null = null;
+  editingNodeEndpoint = false; // toggle state
   loading = false;
   success: string | null = null;
   error: string | null = null;
@@ -155,6 +156,36 @@ export class CapabilitiesComponent implements OnInit {
       // @ts-ignore
       UIkit.modal(modal).hide();
     }
+  }
+
+  /** node_endpoint */
+  toggleNodeEndpointEdit() {
+    if (!this.editingNodeEndpoint) {
+      this.editingNodeEndpoint = true; // Enter edit mode
+    } else {
+      this.saveNodeEndpoint(); // Save and exit edit mode
+    }
+  }
+
+  saveNodeEndpoint() {
+    if (!this.data) return;
+
+    const updatedData: CapabilitiesObject = {
+      ...this.data,
+      node_endpoint: this.data.node_endpoint
+    };
+
+    this.capService.updateCapabilities(updatedData).subscribe({
+      next: () => {
+        this.showSuccess('Node endpoint updated successfully!');
+        this.editingNodeEndpoint = false; // disable input again
+        this.loadCapabilities();
+      },
+      error: (err) => {
+        console.error('Update failed', err);
+        this.showError('Failed to update node endpoint.');
+      }
+    });
   }
 
   /** success and error message helpers */

@@ -1,5 +1,3 @@
-<h2 class="uk-heading-line uk-text-center capabilities-title" style=""><span>Capabilities</span></h2>
-
 <!-- Message area: fixed height to prevent layout shifts -->
 <div class="messages-container">
   <div *ngIf="loading" class="uk-alert-primary uk-margin-remove" uk-alert>
@@ -14,6 +12,29 @@
     {{ success }}
   </div>
 </div>
+
+<h2 class="uk-heading-line uk-text-center capabilities-title uk-margin-remove-top" style=""><span>Node Endpoint</span></h2>
+
+<div class="uk-margin uk-text-center" *ngIf="data && !loading">
+  <input
+    class="uk-input uk-border-rounded uk-width-1-2@m uk-width-1-1"
+    type="text"
+    [(ngModel)]="data.node_endpoint"
+    [disabled]="!editingNodeEndpoint"
+  />
+
+  <!-- Toggle button -->
+  <button
+    class="uk-button uk-border-rounded uk-margin-small-left"
+    [ngClass]="editingNodeEndpoint ? 'uk-button-primary' : 'uk-button-default edit-btn'"
+    (click)="toggleNodeEndpointEdit()"
+  >
+    <span *ngIf="!editingNodeEndpoint" uk-icon="pencil"></span>
+    <span *ngIf="editingNodeEndpoint">Save</span>
+  </button>
+</div>
+
+<h2 class="uk-heading-line uk-text-center capabilities-title" style=""><span>Capabilities</span></h2>
 
 <div class="uk-grid-small uk-child-width-1-2@s uk-grid-match" uk-grid *ngIf="data && !loading">
   <div *ngFor="let c of data.capabilities">
@@ -48,13 +69,13 @@
 
 <h3>Add Capability</h3>
 <form class="uk-form-stacked" (ngSubmit)="addCap()">
-  <div class="uk-margin">
+  <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Capability Type" [(ngModel)]="newCap.capability_type" name="type" required>
   </div>
-  <div class="uk-margin">
+  <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Endpoint" [(ngModel)]="newCap.endpoint" name="endpoint">
   </div>
-  <div class="uk-margin">
+  <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Version" [(ngModel)]="newCap.version" name="version">
   </div>
   <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
