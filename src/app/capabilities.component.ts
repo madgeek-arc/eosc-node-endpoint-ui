@@ -32,7 +32,11 @@ export class CapabilitiesComponent implements OnInit {
     this.error = null;
     this.capService.getCapabilities().subscribe({
       next: (res) => {
-        this.data = res;
+        // always normalize to avoid null errors
+        this.data = {
+          ...res,
+          capabilities: res.capabilities ?? []
+        };
         this.loading = false;
       },
       error: (err) => {
@@ -47,15 +51,14 @@ export class CapabilitiesComponent implements OnInit {
   addCap() {
     if (!this.newCap.capability_type || !this.data) return;
 
-    // Build a copy of the current object with the new cap
     const updatedData: CapabilitiesObject = {
       ...this.data,
-      capabilities: [...this.data.capabilities, { ...this.newCap }]
+      capabilities: [...(this.data.capabilities ?? []), { ...this.newCap }]
     };
 
     this.capService.updateCapabilities(updatedData).subscribe({
       next: () => {
-        this.loadCapabilities(); // reload from backend
+        this.loadCapabilities();
         this.newCap = { capability_type: '', endpoint: '', version: '' };
         this.showSuccess('Capability added successfully!');
       },
@@ -80,15 +83,16 @@ export class CapabilitiesComponent implements OnInit {
   deleteCap() {
     if (!this.selectedCap || !this.data) return;
 
-    // Build a new CapabilitiesObject without the selected capability
     const updatedData: CapabilitiesObject = {
       ...this.data,
-      capabilities: this.data.capabilities.filter(c => c.capability_type !== this.selectedCap!.capability_type)
+      capabilities: (this.data.capabilities ?? []).filter(
+        c => c.capability_type !== this.selectedCap!.capability_type
+      )
     };
 
     this.capService.updateCapabilities(updatedData).subscribe({
       next: () => {
-        this.loadCapabilities(); // refresh UI from backend
+        this.loadCapabilities();
         this.showSuccess('Deleted successfully!');
         this.closeDeleteModal();
       },
@@ -127,7 +131,7 @@ export class CapabilitiesComponent implements OnInit {
 
     const updatedData: CapabilitiesObject = {
       ...this.data,
-      capabilities: this.data.capabilities.map(c =>
+      capabilities: (this.data.capabilities ?? []).map(c =>
         c.capability_type === this.oldCapabilityType
           ? { ...this.selectedCap! }
           : c
@@ -136,7 +140,7 @@ export class CapabilitiesComponent implements OnInit {
 
     this.capService.updateCapabilities(updatedData).subscribe({
       next: () => {
-        this.loadCapabilities(); // refresh UI from backend
+        this.loadCapabilities();
         this.showSuccess('Saved successfully!');
         this.closeEditModal();
       },
@@ -191,12 +195,11 @@ export class CapabilitiesComponent implements OnInit {
   /** success and error message helpers */
   private showSuccess(msg: string) {
     this.success = msg;
-    setTimeout(() => this.success = null, 5000);
+    setTimeout(() => (this.success = null), 5000);
   }
 
   private showError(msg: string) {
     this.error = msg;
-    setTimeout(() => this.error = null, 5000);
+    setTimeout(() => (this.error = null), 5000);
   }
-
 }
