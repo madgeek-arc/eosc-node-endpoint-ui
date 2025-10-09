@@ -70,18 +70,20 @@
 <h3>Add Capability</h3>
 <form class="uk-form-stacked" (ngSubmit)="addCap()">
   <div class="uk-margin uk-width-1-2@m">
-    <select class="uk-select uk-border-rounded" [(ngModel)]="newCap.capability_type" name="type" required>
+    <select class="uk-select uk-border-rounded" [(ngModel)]="newCapability.capability_type" name="type" required>
       <option value="" disabled selected>Select Capability Type</option>
       @for (type of capabilityTypes; track type) {
-        <option [value]="type">{{ type }}</option>
+        <option [value]="type" [disabled]="isCapabilityTypeUsed(type)" [attr.uk-tooltip]="isCapabilityTypeUsed(type) ? 'Already added' : ''">
+          {{ type }}
+        </option>
       }
     </select>
   </div>
   <div class="uk-margin uk-width-1-2@m">
-    <input class="uk-input uk-border-rounded" placeholder="Endpoint" [(ngModel)]="newCap.endpoint" name="endpoint">
+    <input class="uk-input uk-border-rounded" placeholder="Endpoint" [(ngModel)]="newCapability.endpoint" name="endpoint">
   </div>
   <div class="uk-margin uk-width-1-2@m">
-    <input class="uk-input uk-border-rounded" placeholder="Version" [(ngModel)]="newCap.version" name="version">
+    <input class="uk-input uk-border-rounded" placeholder="Version" [(ngModel)]="newCapability.version" name="version">
   </div>
   <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
 </form>
@@ -92,24 +94,24 @@
     <h2 class="uk-modal-title">Delete Capability</h2>
     <p>Are you sure you want to delete this Capability?</p>
     <form (ngSubmit)="deleteCap()">
-      <ng-container *ngIf="selectedCap">
+      <ng-container *ngIf="selectedCapability">
         <p class="uk-card-title">
-          {{ selectedCap.capability_type }}
+          {{ selectedCapability.capability_type }}
         </p>
         <p><strong>Endpoint:</strong>
-          <ng-container *ngIf="isUrl(selectedCap.endpoint); else plainText">
-            <a [href]="selectedCap.endpoint"
+          <ng-container *ngIf="isUrl(selectedCapability.endpoint); else plainText">
+            <a [href]="selectedCapability.endpoint"
                target="_blank"
                rel="noopener noreferrer"
                class="uk-text-primary">
-              {{ selectedCap.endpoint }}
+              {{ selectedCapability.endpoint }}
             </a>
           </ng-container>
           <ng-template #plainText>
-            {{ selectedCap.endpoint }}
+            {{ selectedCapability.endpoint }}
           </ng-template>
         </p>
-        <p><strong>Version:</strong> {{ selectedCap.version }}</p>
+        <p><strong>Version:</strong> {{ selectedCapability.version }}</p>
       </ng-container>
       <div class="uk-flex uk-flex-right uk-margin">
         <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeDeleteModal()">Cancel</button>
@@ -123,23 +125,25 @@
 <div id="edit-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
     <h2 class="uk-modal-title">Edit Capability</h2>
-    <form (ngSubmit)="saveEdit()" *ngIf="selectedCap">
+    <form (ngSubmit)="saveEdit()" *ngIf="selectedCapability">
       <div class="uk-margin">
         <label class="uk-form-label" for="editType">Capability Type</label>
-        <select class="uk-select uk-border-rounded" [(ngModel)]="selectedCap.capability_type" name="editType" required>
+        <select class="uk-select uk-border-rounded" [(ngModel)]="selectedCapability.capability_type" name="editType" required>
           <option value="" disabled selected>Select Capability Type</option>
           @for (type of capabilityTypes; track type) {
-            <option [value]="type">{{ type }}</option>
+            <option [value]="type" [disabled]="isCapabilityTypeUsedInEdit(type)">
+              {{ type }}
+            </option>
           }
         </select>
       </div>
       <div class="uk-margin">
         <label class="uk-form-label" for="editEndpoint">Endpoint</label>
-        <input id="editEndpoint" class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.endpoint" name="editEndpoint" placeholder="Endpoint">
+        <input id="editEndpoint" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.endpoint" name="editEndpoint" placeholder="Endpoint">
       </div>
       <div class="uk-margin">
         <label class="uk-form-label" for="editVersion">Version</label>
-        <input id="editVersion" class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.version" name="editVersion" placeholder="Version">
+        <input id="editVersion" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.version" name="editVersion" placeholder="Version">
       </div>
       <div class="uk-flex uk-flex-right uk-margin">
         <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeEditModal()">Cancel</button>

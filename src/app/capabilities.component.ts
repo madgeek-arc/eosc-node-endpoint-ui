@@ -13,8 +13,8 @@ export class CapabilitiesComponent implements OnInit {
   success: string | null = null;
   error: string | null = null;
 
-  newCap: Capability = { capability_type: '', endpoint: '', version: '' };
-  selectedCap: Capability | null = null;  // for modal editing
+  newCapability: Capability = { capability_type: '', endpoint: '', version: '' };
+  selectedCapability: Capability | null = null;  // for modal editing
   oldCapabilityType: string | null = null;
 
   capabilityTypes: string[] = [
@@ -63,17 +63,17 @@ export class CapabilitiesComponent implements OnInit {
 
   /** Add new capability */
   addCap() {
-    if (!this.newCap.capability_type || !this.data) return;
+    if (!this.newCapability.capability_type || !this.data) return;
 
     const updatedData: CapabilitiesObject = {
       ...this.data,
-      capabilities: [...(this.data.capabilities ?? []), { ...this.newCap }]
+      capabilities: [...(this.data.capabilities ?? []), { ...this.newCapability }]
     };
 
     this.capService.updateCapabilities(updatedData).subscribe({
       next: () => {
         this.loadCapabilities();
-        this.newCap = { capability_type: '', endpoint: '', version: '' };
+        this.newCapability = { capability_type: '', endpoint: '', version: '' };
         this.showSuccess('Capability added successfully!');
       },
       error: (err) => {
@@ -85,7 +85,7 @@ export class CapabilitiesComponent implements OnInit {
 
   /** Open delete confirmation modal */
   confirmDelete(cap: Capability) {
-    this.selectedCap = { ...cap };
+    this.selectedCapability = { ...cap };
     const modal = document.getElementById('delete-modal');
     if (modal) {
       // @ts-ignore
@@ -95,12 +95,12 @@ export class CapabilitiesComponent implements OnInit {
 
   /** Execute deletion */
   deleteCap() {
-    if (!this.selectedCap || !this.data) return;
+    if (!this.selectedCapability || !this.data) return;
 
     const updatedData: CapabilitiesObject = {
       ...this.data,
       capabilities: (this.data.capabilities ?? []).filter(
-        c => c.capability_type !== this.selectedCap!.capability_type
+        c => c.capability_type !== this.selectedCapability!.capability_type
       )
     };
 
@@ -120,7 +120,7 @@ export class CapabilitiesComponent implements OnInit {
 
   /** Close the delete modal */
   closeDeleteModal() {
-    this.selectedCap = null;
+    this.selectedCapability = null;
     const modal = document.getElementById('delete-modal');
     if (modal) {
       // @ts-ignore
@@ -130,7 +130,7 @@ export class CapabilitiesComponent implements OnInit {
 
   /** Open modal for editing */
   editCap(cap: Capability) {
-    this.selectedCap = { ...cap }; // make a copy
+    this.selectedCapability = { ...cap }; // make a copy
     this.oldCapabilityType = cap.capability_type; // store original type
     const modal = document.getElementById('edit-modal');
     if (modal) {
@@ -141,13 +141,13 @@ export class CapabilitiesComponent implements OnInit {
 
   /** Save changes from modal */
   saveEdit() {
-    if (!this.selectedCap || !this.data || !this.oldCapabilityType) return;
+    if (!this.selectedCapability || !this.data || !this.oldCapabilityType) return;
 
     const updatedData: CapabilitiesObject = {
       ...this.data,
       capabilities: (this.data.capabilities ?? []).map(c =>
         c.capability_type === this.oldCapabilityType
-          ? { ...this.selectedCap! }
+          ? { ...this.selectedCapability! }
           : c
       )
     };
@@ -167,7 +167,7 @@ export class CapabilitiesComponent implements OnInit {
   }
 
   closeEditModal() {
-    this.selectedCap = null;
+    this.selectedCapability = null;
     this.oldCapabilityType = null; // reset old type
     const modal = document.getElementById('edit-modal');
     if (modal) {
@@ -205,6 +205,19 @@ export class CapabilitiesComponent implements OnInit {
       }
     });
   }
+
+  /** helper methods to check if a capability type is used */
+  isCapabilityTypeUsed(option: string): boolean {
+    return <boolean>this.data?.capabilities.some(cap => cap.capability_type === option);
+  }
+
+  isCapabilityTypeUsedInEdit(option: string): boolean {
+    // Allow the current capability type being edited
+    if (this.selectedCapability?.capability_type === option) return false;
+    // Disable others that are already used
+    return this.data?.capabilities?.some(cap => cap.capability_type === option) || false;
+  }
+
 
   /** success and error message helpers */
   private showSuccess(msg: string) {
