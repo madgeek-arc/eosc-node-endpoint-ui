@@ -1,59 +1,54 @@
-# EoscNodeEndpointUi
+<div align="center">
+  <img src='https://eosc.eu/wp-content/uploads/2024/02/EOSC-Beyond-logo.png'></img>
+</div>
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+# Node Endpoints Service (Front-End)
 
-## Development server
+## Description
 
-To start a local development server, run:
+The **Node Endpoints Service (Front-End)** allows you to register and update your node's capabilities through a web interface.
+The information is stored in a `capabilities.json` file at your chosen location.
 
-```bash
-ng serve
-```
+You do **not** need to pre-create this file — it will be created automatically the first time you register capabilities.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+* Angular 20
+* Node.js 20
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Installation
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Clone the repository and install dependencies:
 
 ```bash
-ng build
+git clone https://github.com/madgeek-arc/eosc-node-endpoint-ui.git
+cd eosc-node-endpoint-ui
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Running the Front-End
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Start the development server with:
 
 ```bash
-ng test
+npm run start
 ```
 
-## Running end-to-end tests
+The front-end will typically run on:
+`http://localhost:4200`
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
+## Configuration
+
+If you need to connect the front-end to a different back-end URL, modify the environment configuration in:
+
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+src/environments/environment.ts
+```
