@@ -70,7 +70,12 @@
 <h3>Add Capability</h3>
 <form class="uk-form-stacked" (ngSubmit)="addCap()">
   <div class="uk-margin uk-width-1-2@m">
-    <input class="uk-input uk-border-rounded" placeholder="Capability Type" [(ngModel)]="newCap.capability_type" name="type" required>
+    <select class="uk-select uk-border-rounded" [(ngModel)]="newCap.capability_type" name="type" required>
+      <option value="" disabled selected>Select Capability Type</option>
+      @for (type of capabilityTypes; track type) {
+        <option [value]="type">{{ type }}</option>
+      }
+    </select>
   </div>
   <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Endpoint" [(ngModel)]="newCap.endpoint" name="endpoint">
@@ -118,21 +123,24 @@
 <div id="edit-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
     <h2 class="uk-modal-title">Edit Capability</h2>
-    <form (ngSubmit)="saveEdit()">
-      <ng-container *ngIf="selectedCap">
-        <div class="uk-margin">
-          <label class="uk-form-label" for="editType">Capability Type</label>
-          <input class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.capability_type" name="editType" required>
-        </div>
-        <div class="uk-margin">
-          <label class="uk-form-label" for="editType">Endpoint</label>
-          <input class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.endpoint" name="editEndpoint">
-        </div>
-        <div class="uk-margin">
-          <label class="uk-form-label" for="editType">Version</label>
-          <input class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.version" name="editVersion">
-        </div>
-      </ng-container>
+    <form (ngSubmit)="saveEdit()" *ngIf="selectedCap">
+      <div class="uk-margin">
+        <label class="uk-form-label" for="editType">Capability Type</label>
+        <select class="uk-select uk-border-rounded" [(ngModel)]="selectedCap.capability_type" name="editType" required>
+          <option value="" disabled selected>Select Capability Type</option>
+          @for (type of capabilityTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="editEndpoint">Endpoint</label>
+        <input id="editEndpoint" class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.endpoint" name="editEndpoint" placeholder="Endpoint">
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="editVersion">Version</label>
+        <input id="editVersion" class="uk-input uk-border-rounded" [(ngModel)]="selectedCap.version" name="editVersion" placeholder="Version">
+      </div>
       <div class="uk-flex uk-flex-right uk-margin">
         <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeEditModal()">Cancel</button>
         <button type="submit" class="uk-button uk-button-primary uk-border-rounded">Save</button>

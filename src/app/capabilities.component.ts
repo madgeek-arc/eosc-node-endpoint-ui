@@ -17,6 +17,20 @@ export class CapabilitiesComponent implements OnInit {
   selectedCap: Capability | null = null;  // for modal editing
   oldCapabilityType: string | null = null;
 
+  capabilityTypes: string[] = [
+    'AAI',
+    'Accounting',
+    'Monitoring',
+    'Execution Framework',
+    'Helpdesk',
+    'Integration Suite',
+    'Messaging',
+    'PID',
+    'Resource Catalogue',
+    'Front Office',
+    'Order Management'
+  ];
+
   constructor(private capService: CapabilitiesService) {}
 
   ngOnInit() {
