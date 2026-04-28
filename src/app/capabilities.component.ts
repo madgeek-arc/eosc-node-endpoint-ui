@@ -31,6 +31,47 @@ export class CapabilitiesComponent implements OnInit {
     'Order Management'
   ];
 
+  protocols: string[] = [
+    'REST',
+    'SOAP',
+    'gRPC',
+    'SSE',
+    'WebSocket',
+    'RSocket'
+  ];
+
+  statuses: string[] = [
+    'OPERATIONAL',
+    'MAINTENANCE',
+    'UNAVAILABLE'
+  ];
+
+  selectedProtocol = '';
+  isCustomProtocol = false;
+
+  selectedStatus = '';
+  isCustomStatus = false;
+
+  onProtocolChange(value: string) {
+    if (value === '__other__') {
+      this.isCustomProtocol = true;
+      this.newCapability.protocol = '';
+    } else {
+      this.isCustomProtocol = false;
+      this.newCapability.protocol = value;
+    }
+  }
+
+  onStatusChange(value: string) {
+    if (value === '__other__') {
+      this.isCustomStatus = true;
+      this.newCapability.status = '';
+    } else {
+      this.isCustomStatus = false;
+      this.newCapability.status = value;
+    }
+  }
+
   constructor(private capService: CapabilitiesService) {}
 
   ngOnInit() {
@@ -69,6 +110,12 @@ export class CapabilitiesComponent implements OnInit {
       ...this.data,
       capabilities: [...(this.data.capabilities ?? []), { ...this.newCapability }]
     };
+
+    // reset dropdown state
+    this.selectedProtocol = '';
+    this.selectedStatus = '';
+    this.isCustomProtocol = false;
+    this.isCustomStatus = false;
 
     this.capService.updateCapabilities(updatedData).subscribe({
       next: () => {
@@ -132,6 +179,25 @@ export class CapabilitiesComponent implements OnInit {
   editCap(cap: Capability) {
     this.selectedCapability = { ...cap }; // make a copy
     this.oldCapabilityType = cap.capability_type; // store original type
+
+    // Pre-populate protocol dropdown
+    if (this.protocols.includes(cap.protocol)) {
+      this.selectedProtocol = cap.protocol;
+      this.isCustomProtocol = false;
+    } else {
+      this.selectedProtocol = '__other__';
+      this.isCustomProtocol = true;
+    }
+
+    // Pre-populate status dropdown
+    if (this.statuses.includes(cap.status)) {
+      this.selectedStatus = cap.status;
+      this.isCustomStatus = false;
+    } else {
+      this.selectedStatus = '__other__';
+      this.isCustomStatus = true;
+    }
+
     const modal = document.getElementById('edit-modal');
     if (modal) {
       // @ts-ignore
@@ -167,8 +233,13 @@ export class CapabilitiesComponent implements OnInit {
   }
 
   closeEditModal() {
+    // reset dropdown state
+    this.selectedProtocol = '';
+    this.selectedStatus = '';
+    this.isCustomProtocol = false;
+    this.isCustomStatus = false;
     this.selectedCapability = null;
-    this.oldCapabilityType = null; // reset old type
+    this.oldCapabilityType = null;
     const modal = document.getElementById('edit-modal');
     if (modal) {
       // @ts-ignore

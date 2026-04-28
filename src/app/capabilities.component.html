@@ -84,6 +84,7 @@
 
 <h3>Add Capability</h3>
 <form class="uk-form-stacked" (ngSubmit)="addCap()">
+
   <div class="uk-margin uk-width-1-2@m">
     <select class="uk-select uk-border-rounded" [(ngModel)]="newCapability.capability_type" name="type" required>
       <option value="" disabled selected>Select Capability Type</option>
@@ -94,22 +95,67 @@
       }
     </select>
   </div>
+
   <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Endpoint" [(ngModel)]="newCapability.endpoint" name="endpoint">
   </div>
+
   <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Version" [(ngModel)]="newCapability.version" name="version">
   </div>
+
   <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="API Specification" [(ngModel)]="newCapability.api_spec" name="apiSpec">
   </div>
+
   <div class="uk-margin uk-width-1-2@m">
-    <input class="uk-input uk-border-rounded" placeholder="Protocol" [(ngModel)]="newCapability.protocol" name="protocol">
+    <select class="uk-select uk-border-rounded"
+            [(ngModel)]="selectedProtocol"
+            (ngModelChange)="onProtocolChange($event)"
+            name="protocol">
+      <option value="" disabled selected>Select Protocol</option>
+      @for (val of protocols; track val) {
+        <option [value]="val">{{ val }}</option>
+      }
+      <option value="__other__">Other (type your own...)</option>
+    </select>
+    @if (isCustomProtocol) {
+      <input
+        class="uk-input uk-border-rounded uk-margin-small-top"
+        type="text"
+        placeholder="Enter custom protocol..."
+        [(ngModel)]="newCapability.protocol"
+        (ngModelChange)="newCapability.protocol = $event.toUpperCase()"
+        name="customProtocol"
+      />
+    }
   </div>
+
   <div class="uk-margin uk-width-1-2@m">
-    <input class="uk-input uk-border-rounded" placeholder="Status" [(ngModel)]="newCapability.status" name="status">
+    <select class="uk-select uk-border-rounded"
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="onStatusChange($event)"
+            name="status">
+      <option value="" disabled selected>Select Status</option>
+      @for (val of statuses; track val) {
+        <option [value]="val">{{ val }}</option>
+      }
+      <option value="__other__">Other (type your own...)</option>
+    </select>
+    @if (isCustomStatus) {
+      <input
+        class="uk-input uk-border-rounded uk-margin-small-top"
+        type="text"
+        placeholder="Enter custom status..."
+        [(ngModel)]="newCapability.status"
+        (ngModelChange)="newCapability.status = $event.toUpperCase()"
+        name="customStatus"
+      />
+    }
   </div>
+
   <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
+
 </form>
 
 <!-- Delete Modal -->
@@ -165,6 +211,7 @@
   <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
     <h2 class="uk-modal-title">Edit Capability</h2>
     <form (ngSubmit)="saveEdit()" *ngIf="selectedCapability">
+
       <div class="uk-margin">
         <label class="uk-form-label" for="editType">Capability Type</label>
         <select class="uk-select uk-border-rounded" [(ngModel)]="selectedCapability.capability_type" name="editType" required>
@@ -176,26 +223,70 @@
           }
         </select>
       </div>
+
       <div class="uk-margin">
         <label class="uk-form-label" for="editEndpoint">Endpoint</label>
         <input id="editEndpoint" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.endpoint" name="editEndpoint" placeholder="Endpoint">
       </div>
+
       <div class="uk-margin">
         <label class="uk-form-label" for="editVersion">Version</label>
         <input id="editVersion" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.version" name="editVersion" placeholder="Version">
       </div>
+
       <div class="uk-margin">
         <label class="uk-form-label" for="editApiSpec">API Specification</label>
         <input id="editApiSpec" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.api_spec" name="editApiSpec" placeholder="API Specification">
       </div>
+
       <div class="uk-margin">
-        <label class="uk-form-label" for="editProtocol">Protocol</label>
-        <input id="editProtocol" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.protocol" name="editProtocol" placeholder="Protocol">
+        <label class="uk-form-label" for="editApiSpec">Protocol</label>
+        <select class="uk-select uk-border-rounded"
+                [(ngModel)]="selectedProtocol"
+                (ngModelChange)="onProtocolChange($event)"
+                name="protocol">
+          <option value="" disabled>Select Protocol</option>
+          @for (val of protocols; track val) {
+            <option [value]="val">{{ val }}</option>
+          }
+          <option value="__other__">Other (type your own...)</option>
+        </select>
+        @if (isCustomProtocol) {
+          <input
+            class="uk-input uk-border-rounded uk-margin-small-top"
+            type="text"
+            placeholder="Enter custom protocol..."
+            [ngModel]="selectedCapability.protocol"
+            (ngModelChange)="selectedCapability.protocol = $event.toUpperCase()"
+            name="editCustomProtocol"
+          />
+        }
       </div>
+
       <div class="uk-margin">
-        <label class="uk-form-label" for="editStatus">Status</label>
-        <input id="editStatus" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.status" name="editStatus" placeholder="Status">
+        <label class="uk-form-label" for="editApiSpec">Status</label>
+        <select class="uk-select uk-border-rounded"
+                [(ngModel)]="selectedStatus"
+                (ngModelChange)="onStatusChange($event)"
+                name="status">
+          <option value="" disabled>Select Status</option>
+          @for (val of statuses; track val) {
+            <option [value]="val">{{ val }}</option>
+          }
+          <option value="__other__">Other (type your own...)</option>
+        </select>
+        @if (isCustomStatus) {
+          <input
+            class="uk-input uk-border-rounded uk-margin-small-top"
+            type="text"
+            placeholder="Enter custom status..."
+            [ngModel]="selectedCapability.status"
+            (ngModelChange)="selectedCapability.status = $event.toUpperCase()"
+            name="editCustomStatus"
+          />
+        }
       </div>
+
       <div class="uk-flex uk-flex-right uk-margin">
         <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeEditModal()">Cancel</button>
         <button type="submit" class="uk-button uk-button-primary uk-border-rounded">Save</button>
