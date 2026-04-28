@@ -7,6 +7,9 @@ export interface Capability {
   capability_type: string;
   endpoint: string;
   version: string;
+  api_spec: string;
+  protocol: string;
+  status: string;
 }
 
 export interface CapabilitiesObject {

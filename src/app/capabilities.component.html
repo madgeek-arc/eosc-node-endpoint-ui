@@ -45,7 +45,7 @@
               (click)="editCap(c)"></span>
       </h3>
       <p><strong>Endpoint:</strong>
-        <ng-container *ngIf="isUrl(c.endpoint); else plainText">
+        <ng-container *ngIf="isUrl(c.endpoint); else plainText1">
           <a [href]="c.endpoint"
              target="_blank"
              rel="noopener noreferrer"
@@ -53,13 +53,28 @@
             {{ c.endpoint }}
           </a>
         </ng-container>
-        <ng-template #plainText>
+        <ng-template #plainText1>
           {{ c.endpoint }}
         </ng-template>
       </p>
-      <p><strong>Version:</strong> {{ c.version }}
-        <span class="uk-icon-link uk-border-rounded uk-padding-small delete-icon" uk-icon="icon: trash; ratio: 1"
-              (click)="confirmDelete(c)"></span>
+      <p><strong>Version:</strong> {{ c.version }}</p>
+      <p><strong>API Specification:</strong>
+        <ng-container *ngIf="isUrl(c.api_spec); else plainText2">
+          <a [href]="c.api_spec"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="uk-text-primary">
+            {{ c.api_spec }}
+          </a>
+        </ng-container>
+        <ng-template #plainText2>
+          {{ c.api_spec }}
+        </ng-template>
+      </p>
+      <p><strong>Protocol:</strong> {{ c.protocol }}</p>
+      <p><strong>Status:</strong> {{ c.status }}
+      <span class="uk-icon-link uk-border-rounded uk-padding-small delete-icon" uk-icon="icon: trash; ratio: 1"
+            (click)="confirmDelete(c)"></span>
       </p>
     </div>
   </div>
@@ -84,6 +99,15 @@
   </div>
   <div class="uk-margin uk-width-1-2@m">
     <input class="uk-input uk-border-rounded" placeholder="Version" [(ngModel)]="newCapability.version" name="version">
+  </div>
+  <div class="uk-margin uk-width-1-2@m">
+    <input class="uk-input uk-border-rounded" placeholder="API Specification" [(ngModel)]="newCapability.api_spec" name="apiSpec">
+  </div>
+  <div class="uk-margin uk-width-1-2@m">
+    <input class="uk-input uk-border-rounded" placeholder="Protocol" [(ngModel)]="newCapability.protocol" name="protocol">
+  </div>
+  <div class="uk-margin uk-width-1-2@m">
+    <input class="uk-input uk-border-rounded" placeholder="Status" [(ngModel)]="newCapability.status" name="status">
   </div>
   <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
 </form>
@@ -112,6 +136,21 @@
           </ng-template>
         </p>
         <p><strong>Version:</strong> {{ selectedCapability.version }}</p>
+        <p><strong>API Specification:</strong>
+          <ng-container *ngIf="isUrl(selectedCapability.api_spec); else plainText">
+            <a [href]="selectedCapability.api_spec"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="uk-text-primary">
+              {{ selectedCapability.api_spec }}
+            </a>
+          </ng-container>
+          <ng-template #plainText>
+            {{ selectedCapability.api_spec }}
+          </ng-template>
+        </p>
+        <p><strong>Protocol:</strong> {{ selectedCapability.protocol }}</p>
+        <p><strong>Status:</strong> {{ selectedCapability.status }}</p>
       </ng-container>
       <div class="uk-flex uk-flex-right uk-margin">
         <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeDeleteModal()">Cancel</button>
@@ -144,6 +183,18 @@
       <div class="uk-margin">
         <label class="uk-form-label" for="editVersion">Version</label>
         <input id="editVersion" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.version" name="editVersion" placeholder="Version">
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="editApiSpec">API Specification</label>
+        <input id="editApiSpec" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.api_spec" name="editApiSpec" placeholder="API Specification">
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="editProtocol">Protocol</label>
+        <input id="editProtocol" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.protocol" name="editProtocol" placeholder="Protocol">
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="editStatus">Status</label>
+        <input id="editStatus" class="uk-input uk-border-rounded" [(ngModel)]="selectedCapability.status" name="editStatus" placeholder="Status">
       </div>
       <div class="uk-flex uk-flex-right uk-margin">
         <button type="button" class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="closeEditModal()">Cancel</button>

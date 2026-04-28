@@ -13,7 +13,7 @@ export class CapabilitiesComponent implements OnInit {
   success: string | null = null;
   error: string | null = null;
 
-  newCapability: Capability = { capability_type: '', endpoint: '', version: '' };
+  newCapability: Capability = { capability_type: '', endpoint: '', version: '', api_spec: '', protocol: '', status: '' };
   selectedCapability: Capability | null = null;  // for modal editing
   oldCapabilityType: string | null = null;
 
@@ -73,7 +73,7 @@ export class CapabilitiesComponent implements OnInit {
     this.capService.updateCapabilities(updatedData).subscribe({
       next: () => {
         this.loadCapabilities();
-        this.newCapability = { capability_type: '', endpoint: '', version: '' };
+        this.newCapability = { capability_type: '', endpoint: '', version: '', api_spec: '', protocol: '', status: '' };
         this.showSuccess('Capability added successfully!');
       },
       error: (err) => {
