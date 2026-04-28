@@ -30,7 +30,15 @@ export class CapabilitiesService {
   }
 
   updateCapabilities(capabilitiesObject: CapabilitiesObject): Observable<any> {
-    return this.http.put(`${this.base}/endpoint`, capabilitiesObject);
+    const sanitized = {
+      ...capabilitiesObject,
+      capabilities: capabilitiesObject.capabilities.map(cap =>
+        Object.fromEntries(
+          Object.entries(cap).map(([key, value]) => [key, value === '' ? null : value])
+        )
+      )
+    };
+    return this.http.put(`${this.base}/endpoint`, sanitized);
   }
 
 }
