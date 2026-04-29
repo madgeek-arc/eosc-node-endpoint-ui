@@ -26,7 +26,12 @@
   <!-- Toggle button -->
   <button
     class="uk-button uk-border-rounded uk-margin-small-left"
-    [ngClass]="editingNodeEndpoint ? 'uk-button-primary' : 'uk-button-default edit-btn'"
+    [ngClass]="{
+      'uk-button-primary': editingNodeEndpoint,
+      'uk-button-default edit-btn': !editingNodeEndpoint,
+      'uk-disabled': data.node_endpoint && data.node_endpoint.trim() !== ''
+    }"
+    [disabled]="data.node_endpoint && data.node_endpoint.trim() !== ''"
     (click)="toggleNodeEndpointEdit()"
   >
     <span *ngIf="!editingNodeEndpoint" uk-icon="pencil"></span>
