@@ -24,19 +24,21 @@
   />
 
   <!-- Toggle button -->
-  <button
-    class="uk-button uk-border-rounded uk-margin-small-left"
-    [ngClass]="{
-      'uk-button-primary': editingNodeEndpoint,
-      'uk-button-default edit-btn': !editingNodeEndpoint,
-      'uk-disabled': data.node_endpoint && data.node_endpoint.trim() !== ''
-    }"
-    [disabled]="data.node_endpoint && data.node_endpoint.trim() !== ''"
-    (click)="toggleNodeEndpointEdit()"
-  >
-    <span *ngIf="!editingNodeEndpoint" uk-icon="pencil"></span>
-    <span *ngIf="editingNodeEndpoint">Save</span>
-  </button>
+  @if (this.authService.isAuthorized) {
+    <button
+      class="uk-button uk-border-rounded uk-margin-small-left"
+      [ngClass]="{
+        'uk-button-primary': editingNodeEndpoint,
+        'uk-button-default edit-btn': !editingNodeEndpoint,
+        'uk-disabled': data.node_endpoint && data.node_endpoint.trim() !== ''
+      }"
+      [disabled]="data.node_endpoint && data.node_endpoint.trim() !== ''"
+      (click)="toggleNodeEndpointEdit()"
+    >
+      <span *ngIf="!editingNodeEndpoint" uk-icon="pencil"></span>
+      <span *ngIf="editingNodeEndpoint">Save</span>
+    </button>
+  }
 </div>
 
 <h2 class="uk-heading-line uk-text-center capabilities-title" style=""><span>Capabilities</span></h2>
@@ -46,8 +48,10 @@
     <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
       <h3 class="uk-card-title">
         {{ c.capability_type }}
-        <span class="uk-icon-link uk-border-rounded uk-padding-small edit-icon" uk-icon="icon: pencil; ratio: 1"
-              (click)="editCap(c)"></span>
+        @if (this.authService.isAuthorized) {
+          <span class="uk-icon-link uk-border-rounded uk-padding-small edit-icon" uk-icon="icon: pencil; ratio: 1"
+                (click)="editCap(c)"></span>
+        }
       </h3>
       <p><strong>Endpoint:</strong>
         <ng-container *ngIf="isUrl(c.endpoint); else plainText1">
@@ -78,8 +82,10 @@
       </p>
       <p><strong>Protocol:</strong> {{ c.protocol }}</p>
       <p><strong>Status:</strong> {{ c.status }}
-      <span class="uk-icon-link uk-border-rounded uk-padding-small delete-icon" uk-icon="icon: trash; ratio: 1"
-            (click)="confirmDelete(c)"></span>
+      @if (this.authService.isAuthorized) {
+        <span class="uk-icon-link uk-border-rounded uk-padding-small delete-icon" uk-icon="icon: trash; ratio: 1"
+              (click)="confirmDelete(c)"></span>
+      }
       </p>
     </div>
   </div>
@@ -159,7 +165,10 @@
     }
   </div>
 
-  <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
+  @if (this.authService.isAuthorized) {
+    <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
+  }
+
 
 </form>
 

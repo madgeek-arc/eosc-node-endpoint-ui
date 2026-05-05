@@ -1,12 +1,32 @@
 <!-- Header (full width) -->
 <header class="uk-margin">
   <nav class="uk-navbar-container" uk-navbar>
+
     <div class="uk-navbar-left">
       <a class="uk-navbar-item uk-logo" href="#">
         <img src="assets/images/logo-beyond-dark.png" alt="Logo" style="height: 40px; margin-left: 16px; margin-right: 8px;">
         Node Endpoint
       </a>
     </div>
+
+    <div class="uk-navbar-right">
+      <div class="uk-navbar-item">
+
+        <ng-container *ngIf="!isLoggedIn; else loggedInTpl">
+          <button class="uk-button uk-button-primary uk-border-rounded uk-margin-right" (click)="login()">
+            Login
+          </button>
+        </ng-container>
+
+        <ng-template #loggedInTpl>
+          <button class="uk-button uk-button-default uk-border-rounded uk-margin-right" (click)="logout()">
+            Logout
+          </button>
+        </ng-template>
+
+      </div>
+    </div>
+
   </nav>
 </header>
 

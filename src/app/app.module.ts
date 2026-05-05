@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CapabilitiesComponent } from "./capabilities.component";
 import { CapabilitiesService } from "./capabilities.service";
+import {APP_BASE_HREF} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { CapabilitiesService } from "./capabilities.service";
     HttpClientModule
   ],
   providers: [
+    { provide: APP_BASE_HREF, useValue: '/admin/' },
     CapabilitiesService
   ],
   bootstrap: [AppComponent]

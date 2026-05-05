@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CapabilitiesService, Capability, CapabilitiesObject } from './capabilities.service';
+import {AuthService} from './authentication.service.component';
 
 @Component({
   selector: 'app-capabilities',
@@ -71,8 +72,7 @@ export class CapabilitiesComponent implements OnInit {
       this.newCapability.status = value;
     }
   }
-
-  constructor(private capService: CapabilitiesService) {}
+  constructor(protected authService: AuthService, private capService: CapabilitiesService) {}
 
   ngOnInit() {
     this.loadCapabilities();
