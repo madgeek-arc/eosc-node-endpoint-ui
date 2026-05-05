@@ -57,9 +57,11 @@ export class CapabilitiesComponent implements OnInit {
     if (value === '__other__') {
       this.isCustomProtocol = true;
       this.newCapability.protocol = '';
+      if (this.selectedCapability) this.selectedCapability.protocol = '';
     } else {
       this.isCustomProtocol = false;
       this.newCapability.protocol = value;
+      if (this.selectedCapability) this.selectedCapability.protocol = value;
     }
   }
 
@@ -67,11 +69,14 @@ export class CapabilitiesComponent implements OnInit {
     if (value === '__other__') {
       this.isCustomStatus = true;
       this.newCapability.status = '';
+      if (this.selectedCapability) this.selectedCapability.status = '';
     } else {
       this.isCustomStatus = false;
       this.newCapability.status = value;
+      if (this.selectedCapability) this.selectedCapability.status = value;
     }
   }
+
   constructor(protected authService: AuthService, private capService: CapabilitiesService) {}
 
   ngOnInit() {
@@ -128,6 +133,8 @@ export class CapabilitiesComponent implements OnInit {
         this.showError('Failed to submit.');
       }
     });
+
+    this.resetProtocolStatusState();
   }
 
   /** Open delete confirmation modal */
@@ -230,6 +237,8 @@ export class CapabilitiesComponent implements OnInit {
         this.closeEditModal();
       }
     });
+
+    this.resetProtocolStatusState();
   }
 
   closeEditModal() {
@@ -245,6 +254,7 @@ export class CapabilitiesComponent implements OnInit {
       // @ts-ignore
       UIkit.modal(modal).hide();
     }
+    this.resetProtocolStatusState();
   }
 
   /** node_endpoint */
@@ -289,6 +299,15 @@ export class CapabilitiesComponent implements OnInit {
     return this.data?.capabilities?.some(cap => cap.capability_type === option) || false;
   }
 
+  /** resets protocol and status fields */
+  resetProtocolStatusState() {
+    this.selectedProtocol = '';
+    this.selectedStatus = '';
+    this.isCustomProtocol = false;
+    this.isCustomStatus = false;
+    this.newCapability.protocol = '';
+    this.newCapability.status = '';
+  }
 
   /** success and error message helpers */
   private showSuccess(msg: string) {
