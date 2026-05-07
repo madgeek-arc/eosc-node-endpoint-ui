@@ -8,7 +8,8 @@ COPY package-lock.json ./
 
 RUN npm ci
 COPY . .
-RUN npm run build:prod
+ARG configuration=prod
+RUN npm run build:$configuration
 
 
 ### Create Container ###
