@@ -308,3 +308,12 @@
     </form>
   </div>
 </div>
+
+<button
+  *ngIf="data && data.capabilities && data.capabilities.length > 0"
+  class="uk-button uk-button-primary uk-border-rounded scroll-to-form-btn"
+  (click)="scrollToForm()"
+  uk-tooltip="Add Capability"
+>
+  <span uk-icon="icon: plus; ratio: 1.2"></span>
+</button>

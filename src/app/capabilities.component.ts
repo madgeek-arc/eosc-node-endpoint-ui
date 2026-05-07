@@ -134,6 +134,7 @@ export class CapabilitiesComponent implements OnInit {
       }
     });
 
+    window.scrollTo(0, 0);
     this.resetProtocolStatusState();
   }
 
@@ -318,5 +319,13 @@ export class CapabilitiesComponent implements OnInit {
   private showError(msg: string) {
     this.error = msg;
     setTimeout(() => (this.error = null), 5000);
+  }
+
+  /** scroll helper */
+  scrollToForm() {
+    const form = document.querySelector('form');
+    if (form) {
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }
