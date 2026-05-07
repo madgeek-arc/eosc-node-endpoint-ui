@@ -62,7 +62,7 @@ pipeline {
       }
     }
 
-  stage('Handle Releases') {
+    stage('Handle Releases') {
       when {
         allOf {
           branch 'main'
@@ -93,6 +93,7 @@ pipeline {
         }
       }
     }
+
   }
 
   // post-build actions
