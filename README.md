@@ -63,7 +63,7 @@ so the same static build can be served at `/`, `/admin/`, or another reverse-pro
 Build the image:
 
 ```bash
-docker build -t docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local .
+make docker-build
 ```
 
 The Dockerfile builds the production Angular configuration by default:
@@ -84,11 +84,12 @@ The image supports runtime configuration through environment variables:
 Run the image behind a reverse proxy:
 
 ```bash
+IMAGE_TAG="$(node -p "require('./package.json').version")"
 docker run --rm \
   -p 4200:80 \
   -e APP_BASE_HREF=/ \
   -e API_BASE_URL=/api \
-  docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local
+  docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:"${IMAGE_TAG}"
 ```
 
 The container serves only the static Angular application. It does not proxy backend requests; production backend 
@@ -99,7 +100,7 @@ to the backend service.
 Docker Compose example:
 
 ```bash
-docker compose up --build
+make docker-compose
 ```
 
 The local Compose file mounts `docker/nginx/nginx.local.conf`, which proxies
@@ -164,11 +165,12 @@ reverse proxy must strip that prefix before forwarding to the UI container. Use
 matching UI runtime values for that public path:
 
 ```bash
+IMAGE_TAG="$(node -p "require('./package.json').version")"
 docker run --rm \
   -p 4200:80 \
   -e APP_BASE_HREF=/admin/ \
   -e API_BASE_URL=/node \
-  docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local
+  docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:"${IMAGE_TAG}"
 ```
 
 For this layout, route `/node/` to the backend service and configure the OAuth2

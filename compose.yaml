@@ -2,7 +2,7 @@ name: eosc-node-endpoint
 
 services:
   endpoint-ui:
-    image: docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local
+    image: ${IMAGE_NAME:-docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:latest}
     container_name: node-endpoint-ui
     pull_policy: build
     build:
