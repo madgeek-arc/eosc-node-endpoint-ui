@@ -4,8 +4,9 @@
 
 Angular front-end for registering and updating an EOSC Node's advertised capabilities.
 
-This repository contains the front-end only. Capability data is read from and written to the EOSC Node Endpoint backend 
-service, which stores the document in its configured `capabilities.json` file.
+This repository contains the front-end only. Capability data is read from and
+written to the EOSC Node Endpoint backend service, which stores the document in
+its configured `capabilities.json` file.
 
 ## Prerequisites
 
@@ -55,8 +56,9 @@ Production build:
 npm run build:prod
 ```
 
-The production build writes a placeholder base href into `index.html`. That placeholder is patched at deployment time, 
-so the same static build can be served at `/`, `/admin/`, or another reverse-proxy path.
+The production build writes a placeholder base href into `index.html`. That
+placeholder is patched at deployment time, so the same static build can be
+served at `/`, `/admin/`, or another reverse-proxy path.
 
 ## Docker
 
@@ -92,22 +94,25 @@ docker run --rm \
   docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:"${IMAGE_TAG}"
 ```
 
-The container serves only the static Angular application. It does not proxy backend requests; production backend 
-routing belongs in the external reverse proxy or ingress.
+The container serves only the static Angular application. It does not proxy
+backend requests; production backend routing belongs in the external reverse
+proxy or ingress.
 With the default `API_BASE_URL=/api`, that proxy or ingress must route `/api/`
 to the backend service.
 
-Docker Compose example:
+Local Docker Compose example:
 
 ```bash
 make docker-compose
 ```
 
-The local Compose file mounts `docker/nginx/nginx.local.conf`, which proxies
-same-origin `/api` requests from `http://localhost:4200` to the backend service
-on the shared Docker network. The backend service is not exposed on the host in
-that setup; start the backend stack first so `eosc-node-endpoint-net` exists and
-the backend is reachable as `node-endpoint:8080`.
+The Compose file is for local development only. In that local setup, the
+`endpoint-ui` service mounts `docker/nginx/nginx.local.conf` so the UI
+container's nginx can proxy same-origin `/api` requests from
+`http://localhost:4200` to the backend service. Because the backend service is
+not exposed on the host, both containers must share `eosc-node-endpoint-net`;
+start the backend stack first so that network exists and the backend is
+reachable as `node-endpoint:8080`.
 
 ## Configuration
 
@@ -120,8 +125,8 @@ default runtime config is:
 }
 ```
 
-In Docker, `docker-entrypoint.d/99-runtime-config.sh` rewrites `config.json` from environment variables and patches 
-the built `<base href>`.
+In Docker, `docker-entrypoint.d/99-runtime-config.sh` rewrites `config.json`
+from environment variables and patches the built `<base href>`.
 
 For direct web-server deployment without Docker, edit the deployed `index.html`
 base href and `config.json` beside it:
@@ -138,10 +143,12 @@ base href and `config.json` beside it:
 
 ## Production Deployment
 
-This README documents the front-end component. It is not a complete production deployment guide for the full application.
+This README documents the front-end component. It is not a complete production
+deployment guide for the full application.
 
-The backend service is maintained in a separate repository and is not included here. In production, deploy this UI 
-together with the backend and your reverse proxy or ingress configuration in an environment-specific stack.
+The backend service is maintained in a separate repository and is not included
+here. In production, deploy this UI together with the backend and your reverse
+proxy or ingress configuration in an environment-specific stack.
 
 For production, provide at least:
 
@@ -157,6 +164,12 @@ For production, provide at least:
 In this default layout, the UI container serves only the static application at
 `/`. The external reverse proxy or ingress routes `/api/` to the backend; the UI
 container does not proxy backend requests in production.
+
+Production deployments do not need the local Compose network or the
+`docker/nginx/nginx.local.conf` volume mount.
+Use the image's runtime environment variables, such as `APP_BASE_HREF` and
+`API_BASE_URL`, and configure backend routing in the production reverse proxy or
+ingress.
 
 ### Deploying Under a Path Prefix
 
