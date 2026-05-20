@@ -4,7 +4,8 @@
 
 Angular front-end for registering and updating an EOSC Node's advertised capabilities.
 
-This repository contains the front-end only. Capability data is read from and written to the EOSC Node Endpoint backend service, which stores the document in its configured `capabilities.json` file.
+This repository contains the front-end only. Capability data is read from and written to the EOSC Node Endpoint backend 
+service, which stores the document in its configured `capabilities.json` file.
 
 ## Prerequisites
 
@@ -54,14 +55,15 @@ Production build:
 npm run build:prod
 ```
 
-The production build uses `/admin/` as the Angular base href.
+The production build writes a placeholder base href into `index.html`. That placeholder is patched at deployment time, 
+so the same static build can be served at `/`, `/admin/`, or another reverse-proxy path.
 
 ## Docker
 
 Build the image:
 
 ```bash
-docker build -t eosc-node-endpoint-ui .
+docker build -t docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local .
 ```
 
 The Dockerfile builds the production Angular configuration by default:
@@ -70,52 +72,113 @@ The Dockerfile builds the production Angular configuration by default:
 src/environments/environment.prod.ts
 ```
 
-The current production configuration sends API, login, and logout requests to `/node`. In that layout, an external reverse proxy or ingress must route `/node` to the backend service.
+The image supports runtime configuration through environment variables:
 
-The bundled Nginx template also contains a `/api` proxy that uses `API_ENDPOINT`:
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `APP_BASE_HREF` | `/` | Public path where the app is mounted, for example `/admin/` |
+| `API_BASE_URL` | `/api` | Public backend base URL used by Angular requests |
+| `LOGIN_URL` | `${API_BASE_URL}/oauth2/authorization/eosc` | Optional explicit login endpoint |
+| `LOGOUT_URL` | `${API_BASE_URL}/logout` | Optional explicit logout endpoint |
+
+Run the image behind a reverse proxy:
 
 ```bash
-docker run --rm -p 8080:80 \
-  -e API_ENDPOINT=http://backend.example.org \
-  eosc-node-endpoint-ui
+docker run --rm \
+  -p 4200:80 \
+  -e APP_BASE_HREF=/ \
+  -e API_BASE_URL=/api \
+  docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local
 ```
 
-At startup, `env_variables.sh` renders `nginx.conf` with the `API_ENDPOINT` environment variable. This proxy is only used by browser requests sent to `/api`; update the Angular environment or the Nginx routing if your production backend path is different.
+The container serves only the static Angular application. It does not proxy backend requests; production backend 
+routing belongs in the external reverse proxy or ingress.
+With the default `API_BASE_URL=/api`, that proxy or ingress must route `/api/`
+to the backend service.
 
-When this UI and the backend run in the same Compose project, set `API_ENDPOINT` to the backend service name and container port, for example `http://endpoint:8080`. Do not use the backend's published host port for container-to-container traffic.
+Docker Compose example:
+
+```bash
+docker compose up --build
+```
+
+The local Compose file mounts `docker/nginx/nginx.local.conf`, which proxies
+same-origin `/api` requests from `http://localhost:4200` to the backend service
+on the shared Docker network. The backend service is not exposed on the host in
+that setup; start the backend stack first so `eosc-node-endpoint-net` exists and
+the backend is reachable as `node-endpoint:8080`.
 
 ## Configuration
 
-Build-time front-end URLs are defined in:
+Front-end API URLs are loaded at runtime from `config.json`. The checked-in
+default runtime config is:
 
-| File | Purpose |
-|------|---------|
-| `src/environments/environment.ts` | Local development settings |
-| `src/environments/environment.prod.ts` | Production build settings |
+```json
+{
+  "apiBaseUrl": "/api"
+}
+```
 
-Runtime container proxy configuration:
+In Docker, `docker-entrypoint.d/99-runtime-config.sh` rewrites `config.json` from environment variables and patches 
+the built `<base href>`.
 
-| Variable | Description |
-|----------|-------------|
-| `API_ENDPOINT` | Backend origin used by Nginx for proxied `/api` requests |
+For direct web-server deployment without Docker, edit the deployed `index.html`
+base href and `config.json` beside it:
 
-The current production environment points the Angular client at `/node` for API, login, and logout requests. If your public backend path differs, update `src/environments/environment.prod.ts` before building.
+```html
+<base href="/">
+```
+
+```json
+{
+  "apiBaseUrl": "/api"
+}
+```
 
 ## Production Deployment
 
 This README documents the front-end component. It is not a complete production deployment guide for the full application.
 
-The backend service is maintained in a separate repository and is not included here. In production, deploy this UI together with the backend and your reverse proxy or ingress configuration in an environment-specific stack.
+The backend service is maintained in a separate repository and is not included here. In production, deploy this UI 
+together with the backend and your reverse proxy or ingress configuration in an environment-specific stack.
 
 For production, provide at least:
 
 | Concern | Production responsibility |
 |---------|---------------------------|
-| Backend integration | Route the public backend base path used by the UI to the backend service |
-| TLS and public routing | Terminate HTTPS and expose the UI at the expected public `/admin/` path |
-| OAuth2 redirects | Configure the backend login/logout redirects to point back to the public UI URL |
-| Runtime proxy | Set `API_ENDPOINT` for the provided `/api` Nginx proxy, or adapt Nginx to the backend path configured in the Angular environment |
+| UI routing | Expose the UI at the public root path `/` and run the container with `APP_BASE_HREF=/` |
+| Backend routing | Route the public backend base path `/api/` to the backend service and run the UI with `API_BASE_URL=/api` |
+| TLS and public routing | Terminate HTTPS and configure the public host and paths used by browsers |
+| OAuth2 callback | Configure the OAuth2 provider/backend callback URL to use the public backend callback path, for example `/api/login/oauth2/code/eosc` when the backend is published under `/api` |
+| Login/logout flow | Configure backend post-login and logout redirects to return users to the public UI URL |
 | Images | Pin released image tags rather than deploying floating local builds |
+
+In this default layout, the UI container serves only the static application at
+`/`. The external reverse proxy or ingress routes `/api/` to the backend; the UI
+container does not proxy backend requests in production.
+
+### Deploying Under a Path Prefix
+
+If the UI is published below a path prefix such as `/admin/`, the external
+reverse proxy must strip that prefix before forwarding to the UI container. Use
+matching UI runtime values for that public path:
+
+```bash
+docker run --rm \
+  -p 4200:80 \
+  -e APP_BASE_HREF=/admin/ \
+  -e API_BASE_URL=/node \
+  docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local
+```
+
+For this layout, route `/node/` to the backend service and configure the OAuth2
+provider/backend callback URL with the public backend callback path, for example
+`/node/login/oauth2/code/eosc`.
+
+The recommended reverse-proxy shape is to strip the UI prefix before forwarding
+to the container. For example, `/admin/` should reach the UI container as `/`.
+The container should still receive `APP_BASE_HREF=/admin/`, so browser asset and
+router URLs are generated under the public UI path.
 
 ## Useful Commands
 

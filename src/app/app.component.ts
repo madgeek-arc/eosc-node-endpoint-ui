@@ -22,7 +22,7 @@ export class AppComponent {
     this.authService.getUserInfo().subscribe({
       next: (res) => {
         this.isLoggedIn = true;
-        if (res.authorities.some((a: any) => a.authority === 'ADMIN')) this.authService.setAuthorized(true);
+        if (res.authorities.some((a) => a.authority === 'ADMIN')) this.authService.setAuthorized(true);
       },
       error: () => {
         this.isLoggedIn = false;

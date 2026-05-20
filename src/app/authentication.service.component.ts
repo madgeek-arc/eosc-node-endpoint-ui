@@ -1,20 +1,28 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
-import { environment } from '../environments/environment';
+import { AppConfigService } from './app-config.service';
+
+export interface UserAuthority {
+  authority: string;
+}
+
+export interface UserInfo {
+  authorities: UserAuthority[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  private http = inject(HttpClient);
+  private appConfig = inject(AppConfigService);
   private isAuthorizedSubject = new BehaviorSubject<boolean>(false);
   isAuthorized$ = this.isAuthorizedSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
-
-  getUserInfo(): Observable<any> {
-    return this.http.get(`${environment.API_ENDPOINT}/user/info`);
+  getUserInfo(): Observable<UserInfo> {
+    return this.http.get<UserInfo>(`${this.appConfig.apiBaseUrl}/user/info`);
   }
 
   get isAuthorized(): boolean {
@@ -26,12 +34,12 @@ export class AuthService {
   }
 
   login(): void {
-    const redirectUri = encodeURIComponent(window.location.origin);
-    window.location.href = `${environment.API_LOGIN}?redirect_uri=${redirectUri}`;
+    const redirectUri = encodeURIComponent(window.location.href);
+    window.location.href = `${this.appConfig.loginUrl}?redirect_uri=${redirectUri}`;
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${environment.API_LOGOUT}`, {});
+  logout(): Observable<unknown> {
+    return this.http.post(`${this.appConfig.logoutUrl}`, {});
   }
 
 }

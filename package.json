@@ -6,7 +6,7 @@
     "start": "ng serve --serve-path /admin/",
     "build": "ng build",
     "build:dev": "ng build --configuration development",
-    "build:prod": "ng build --base-href /admin/ --configuration production",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

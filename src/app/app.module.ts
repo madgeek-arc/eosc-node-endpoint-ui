@@ -1,12 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { inject, NgModule, provideAppInitializer } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from "@angular/common/http";
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CapabilitiesComponent } from "./capabilities.component";
 import { CapabilitiesService } from "./capabilities.service";
-import {APP_BASE_HREF} from '@angular/common';
+import { AppConfigService } from './app-config.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,7 @@ import {APP_BASE_HREF} from '@angular/common';
     HttpClientModule
   ],
   providers: [
-    { provide: APP_BASE_HREF, useValue: '/admin/' },
+    provideAppInitializer(() => inject(AppConfigService).load()),
     CapabilitiesService
   ],
   bootstrap: [AppComponent]

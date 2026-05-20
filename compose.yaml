@@ -1,0 +1,28 @@
+name: eosc-node-endpoint
+
+services:
+  endpoint-ui:
+    image: docker.madgik.di.uoa.gr/eosc-node-endpoint-ui:local
+    container_name: node-endpoint-ui
+    pull_policy: build
+    build:
+      context: .
+    ports:
+      - "4200:80"
+    volumes:
+      - ./docker/nginx/nginx.local.conf:/etc/nginx/conf.d/default.conf:ro
+    environment:
+      APP_BASE_HREF: /
+      API_BASE_URL: /api
+#      LOGIN_URL: http://localhost:4200/api/oauth2/authorization/eosc
+    networks:
+      - endpoint-net
+
+networks:
+  # Shared with the backend compose project (compose/compose.yaml in eosc-node-endpoint).
+  # The local nginx config proxies /api/ to http://node-endpoint:8080, which requires the
+  # backend service/container to be reachable as node-endpoint on this network.
+  # Start the backend stack first so this network exists.
+  endpoint-net:
+    external: true
+    name: eosc-node-endpoint-net

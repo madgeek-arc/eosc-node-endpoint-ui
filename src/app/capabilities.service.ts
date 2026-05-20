@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {environment} from "../environments/environment";
+import {AppConfigService} from './app-config.service';
 
 export interface Capability {
   capability_type: string;
@@ -20,16 +20,14 @@ export interface CapabilitiesObject {
 @Injectable({ providedIn: 'root' })
 export class CapabilitiesService {
 
-  constructor(public http: HttpClient) {
-  }
-
-  base = environment.API_ENDPOINT;
+  private http = inject(HttpClient);
+  private appConfig = inject(AppConfigService);
 
   getCapabilities() {
-    return this.http.get<CapabilitiesObject>(this.base + `/endpoint`);
+    return this.http.get<CapabilitiesObject>(`${this.appConfig.apiBaseUrl}/endpoint`);
   }
 
-  updateCapabilities(capabilitiesObject: CapabilitiesObject): Observable<any> {
+  updateCapabilities(capabilitiesObject: CapabilitiesObject): Observable<unknown> {
     const sanitized = {
       ...capabilitiesObject,
       capabilities: capabilitiesObject.capabilities.map(cap =>
@@ -38,7 +36,7 @@ export class CapabilitiesService {
         )
       )
     };
-    return this.http.put(`${this.base}/endpoint`, sanitized);
+    return this.http.put(`${this.appConfig.apiBaseUrl}/endpoint`, sanitized);
   }
 
 }
