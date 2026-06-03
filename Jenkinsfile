@@ -1,3 +1,7 @@
+def DOCKER_IMAGE = null
+def DOCKER_TAG = ''
+def DOCKER_IMAGE_SHA = ''
+
 pipeline {
   agent any
 
@@ -11,27 +15,39 @@ pipeline {
     IMAGE_NAME = "eosc-node-endpoint-ui"
     REGISTRY = "docker.madgik.di.uoa.gr"
     REGISTRY_CRED = 'docker-registry'
-    DOCKER_IMAGE = ''
-    DOCKER_TAG = ''
     BUILD_CONFIGURATION = 'prod'
     DOCKER_BUILDKIT = '1'
   }
 
   stages {
-    stage('Validate Version & Determine Docker Tag') {
+    stage('Determine Docker Tag') {
       steps {
         script {
-          DOCKER_TAG = sh(script: 'cat package.json | grep version | head -1 | sed -e \'s/[ "]*version":[ ]*//g\' | cut -c 2-6', returnStdout: true).trim()
+          DOCKER_TAG = sh(script: 'awk -F\'"\' \'/"version"/{print $4; exit}\' package.json', returnStdout: true).trim()
           echo "Docker tag: ${DOCKER_TAG}"
           currentBuild.displayName = "${currentBuild.displayName}-${DOCKER_TAG}"
         }
       }
     }
 
+//    stage('Set Build Configuration') {
+//      when {
+//        expression {
+//          return env.TAG_NAME != null || env.BRANCH_NAME == 'main'
+//        }
+//      }
+//      steps {
+//        script {
+//          BUILD_CONFIGURATION = 'prod'
+//        }
+//      }
+//    }
+
     stage('Build Image') {
       steps{
         script {
           DOCKER_IMAGE = docker.build("${REGISTRY}/${IMAGE_NAME}:${DOCKER_TAG}", "--build-arg configuration=${BUILD_CONFIGURATION} .")
+          DOCKER_IMAGE_SHA = sh(script: "docker inspect --format='{{.Id}}' ${DOCKER_IMAGE.id}", returnStdout: true).trim()
         }
       }
     }
@@ -45,18 +61,20 @@ pipeline {
       steps{
         script {
           withCredentials([usernamePassword(credentialsId: "${REGISTRY_CRED}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-              sh """
-                  echo "Pushing image: ${DOCKER_IMAGE.id}"
-                  echo "$DOCKER_PASS" | docker login ${REGISTRY} -u "$DOCKER_USER" --password-stdin
-              """
-              if (env.TAG_NAME) {
-                def minorTag = DOCKER_TAG.tokenize('.').take(2).join('.')
-                DOCKER_IMAGE.push()
-                DOCKER_IMAGE.push(minorTag)
-                DOCKER_IMAGE.push("latest")
-              } else {
-                DOCKER_IMAGE.push("dev")
-              }
+            sh """
+              echo "Pushing image: ${DOCKER_IMAGE_SHA}"
+              echo "\$DOCKER_PASS" | docker login ${REGISTRY} -u "\$DOCKER_USER" --password-stdin
+            """
+            if (env.TAG_NAME) {
+              def minorTag = DOCKER_TAG.tokenize('.').take(2).join('.')
+              DOCKER_IMAGE.push()
+              DOCKER_IMAGE.push(minorTag)
+              DOCKER_IMAGE.push("latest")
+            } else if (env.BRANCH_NAME == 'main') {
+              DOCKER_IMAGE.push("latest")
+            } else {
+              DOCKER_IMAGE.push("dev")
+            }
           }
         }
       }
@@ -100,8 +118,8 @@ pipeline {
   post {
     always {
       script {
-        if (DOCKER_IMAGE) {
-          sh "docker rmi -f ${DOCKER_IMAGE.id}"
+        if (DOCKER_IMAGE_SHA) {
+          sh "docker rmi -f ${DOCKER_IMAGE_SHA} || true"
           sh "docker image prune -f --filter label=job=${env.JOB_NAME}"
         }
       }
