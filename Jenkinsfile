@@ -120,7 +120,6 @@ pipeline {
       script {
         if (DOCKER_IMAGE_SHA) {
           sh "docker rmi -f ${DOCKER_IMAGE_SHA} || true"
-          sh "docker image prune -f --filter label=job=${env.JOB_NAME}"
         }
       }
     }
