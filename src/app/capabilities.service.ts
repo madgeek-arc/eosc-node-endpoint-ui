@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {AppConfigService} from './app-config.service';
 
 export interface Capability {
+  id?: string;  // assigned by the backend when the capability is first saved
   capability_type: string;
   endpoint: string;
   version: string;
