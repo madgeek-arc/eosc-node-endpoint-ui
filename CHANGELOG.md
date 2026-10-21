@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/madgeek-arc/eosc-node-endpoint-ui/compare/v1.0.0...v1.1.0) (2026-10-21)
+
+
+### Features
+
+* display read-only capability id ([4208bf7](https://github.com/madgeek-arc/eosc-node-endpoint-ui/commit/4208bf7a13f218a66b24cd24aad4501a4d1cc4ff))
+
 ## [1.0.0](https://github.com/madgeek-arc/eosc-node-endpoint-ui/compare/v0.0.1...v1.0.0) (2026-05-07)
 
 
