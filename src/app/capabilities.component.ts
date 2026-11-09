@@ -29,7 +29,8 @@ export class CapabilitiesComponent implements OnInit {
     'PID',
     'Resource Catalogue',
     'Front Office',
-    'Order Management'
+    'Order Management',
+    'Application Deployment Management'
   ];
 
   protocols: string[] = [
